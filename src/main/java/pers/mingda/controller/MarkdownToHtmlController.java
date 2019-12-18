@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @RestController
 public class MarkdownToHtmlController {
 
-    private final String githubMarkdownApi = "https://api.github.com/markdown";
+    private final String githubMarkdownApi = "https://api.github.com/markdown/raw";
 
     @RequestMapping(value = "/markdown-to-html-test", produces = MediaType.TEXT_HTML_VALUE)
     public String markdownToHtmlTest() {
@@ -34,10 +34,10 @@ public class MarkdownToHtmlController {
 
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("text", exampleMarkdown);
-        headers.add("mode", "markdown");
         headers.setContentType(MediaType.TEXT_PLAIN);
-        HttpEntity<String> request = new HttpEntity<>(headers);
+
+        HttpEntity<String> request = new HttpEntity<>(exampleMarkdown, headers);
+
         ResponseEntity<String> responseEntityStr = restTemplate.postForEntity(githubMarkdownApi, request, String.class);
         return responseEntityStr.getBody();
     }
