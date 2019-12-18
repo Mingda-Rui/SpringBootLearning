@@ -20,7 +20,7 @@ public class MarkdownToHtmlController {
 
     private final String githubMarkdownApi = "https://api.github.com/markdown";
 
-    @RequestMapping("md-to-html-test")
+    @RequestMapping("/md-to-html-test")
     public String markdownToHtmlTest() {
         String exampleMarkdown;
         try {
