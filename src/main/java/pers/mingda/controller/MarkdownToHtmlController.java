@@ -18,10 +18,35 @@ import java.util.stream.Collectors;
 @RestController
 public class MarkdownToHtmlController {
 
-    private final String githubMarkdownApi = "https://api.github.com/markdown/raw";
+    private final String githubMarkdownRawApi = "https://api.github.com/markdown/raw";
+    private final String githubMarkdownApi = "https://api.github.com/markdown";
 
-    @RequestMapping(value = "/markdown-to-html-test", produces = MediaType.TEXT_HTML_VALUE)
+    @RequestMapping(value = "/markdown-to-html-test-raw", produces = MediaType.TEXT_HTML_VALUE)
+    public String markdownToHtmlTestRaw() {
+
+        String exampleMarkdown = getExampleMarkdown();
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.TEXT_PLAIN);
+
+        HttpEntity<String> request = new HttpEntity<>(exampleMarkdown, headers);
+
+        ResponseEntity<String> responseEntityStr = restTemplate.postForEntity(githubMarkdownRawApi, request, String.class);
+        return responseEntityStr.getBody();
+    }
+
+    @RequestMapping(value= "/markdown-to-html-test", produces = MediaType.TEXT_HTML_VALUE)
     public String markdownToHtmlTest() {
+        String exampleMarkdown = getExampleMarkdown();
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpEntity<String> request = new HttpEntity<>(composeMarkdownText(exampleMarkdown));
+        ResponseEntity<String> responseEntityStr = restTemplate.postForEntity(githubMarkdownApi, request, String.class);
+        return responseEntityStr.getBody();
+
+    }
+
+    private String getExampleMarkdown() {
         String exampleMarkdown;
         try {
             exampleMarkdown = readInExampleNoteFile();
@@ -31,20 +56,19 @@ public class MarkdownToHtmlController {
             exampleMarkdown = null;
         }
         System.out.println("read in example markdown file: \n" + exampleMarkdown);
-
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_PLAIN);
-
-        HttpEntity<String> request = new HttpEntity<>(exampleMarkdown, headers);
-
-        ResponseEntity<String> responseEntityStr = restTemplate.postForEntity(githubMarkdownApi, request, String.class);
-        return responseEntityStr.getBody();
+        return exampleMarkdown;
     }
 
     private String readInExampleNoteFile() throws IOException {
         Path path = Paths.get("src/main/resources/Note.md");
         BufferedReader reader = Files.newBufferedReader(path);
         return reader.lines().collect(Collectors.joining(System.lineSeparator()));
+    }
+
+    private String composeMarkdownText(String textContent) {
+        String jsonVal = "{" +
+                "\"text\": \""+textContent+"\"" +
+                "}";
+        return jsonVal;
     }
 }
