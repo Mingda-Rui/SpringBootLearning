@@ -65,6 +65,9 @@ public class MarkdownToHtmlController {
         return reader.lines().collect(Collectors.joining(System.lineSeparator()));
     }
 
+    /*
+     * textContent should not contain any strange character
+     */
     private String composeMarkdownText(String textContent) {
         String jsonVal = "{" +
                 "\"text\": \""+textContent+"\"" +
