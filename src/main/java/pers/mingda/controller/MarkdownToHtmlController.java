@@ -69,6 +69,7 @@ public class MarkdownToHtmlController {
         String jsonVal = "{" +
                 "\"text\": \""+textContent+"\"" +
                 "}";
-        return jsonVal;
+        String jsonVal2 = "{\"text\": \"Hello world github/linguist#1 **cool**, and #1!\"}";
+        return jsonVal2;
     }
 }
